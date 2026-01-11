@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Opoozle Store — Trendy goods at great prices</title>
+  <meta name="description" content="Opoozle Store — Joggers, boxers, unisex wear, bags, cosmetics, perfume, jewelry, caps, sneakers and more." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><rect width=%22120%22 height=%22120%22 rx=%2220%22 fill=%22%23386ef7%22/><text x=%2260%22 y=%2275%22 font-size=%2256%22 font-family=%22Arial%22 fill=%22white%22 text-anchor=%22middle%22>O</text></svg>">
+  <style>
+  :root{
+    --bg:#f7f8fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#386ef7;
+    --accent-2:#22c55e;
+    --danger:#ef4444;
+    --max-width:1100px;
+    --radius:12px;
+    --shadow: 0 6px 18px rgba(16,24,40,0.06);
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color-scheme:light;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:#111827;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.4;
+  }
+
+  .container{
+    max-width:var(--max-width);
+    margin:0 auto;
+    padding:0 16px;
+  }
+
+  /* Header */
+  .site-header{
+    background:#fff;
+    border-bottom:1px solid #e6e9ef;
+    position:sticky;
+    top:0;
+    z-index:40;
+  }
+
+  .header-inner{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+  }
+
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    color:var(--accent);
+    font-weight:700;
+    font-size:20px;
+    text-decoration:none;
+  }
+  .logo-sub{color:#111827;font-weight:600;margin-left:4px;font-size:14px}
+
+  .menu-btn{display:none;background:none;border:none;font-size:20px}
+  .search-wrap{flex:1}
+  .search-wrap input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid #e6e9ef;
+    background:#fff;
+    outline:none;
+    font-size:14px;
+  }
+
+  /* header actions */
+  .header-actions{display:flex;gap:8px;align-items:center}
+  .icon-btn{background:none;border:1px solid transparent;padding:8px;border-radius:8px;cursor:pointer}
+  .cart-btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:999px;display:flex;align-items:center;gap:8px}
+  .cart-count{background:rgba(255,255,255,0.14);padding:2px 6px;border-radius:999px;font-size:12px}
+
+  /* categories */
+  .category-bar{display:flex;gap:8px;overflow:auto;padding:8px 0}
+  .cat-btn{background:transparent;border:1px solid transparent;padding:6px 10px;border-radius:999px;cursor:pointer;color:var(--muted)}
+  .cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  /* Main layout */
+  .main-grid{display:grid;grid-template-columns:270px 1fr;gap:20px;padding:20px 0}
+  .filters{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:16px;
+    box-shadow:var(--shadow);
+    position:sticky;
+    top:84px;
+    height:calc(100vh - 120px);
+    overflow:auto;
+  }
+  .filter-group{margin-bottom:16px}
+  .filter-group label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
+  .brands label{display:block;font-size:13px;margin-bottom:6px}
+  .btn{padding:8px 12px;border-radius:8px;border:1px solid #d1d5db;background:#fff;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .small{padding:6px 8px}
+
+  /* products area */
+  .products-section{min-height:60vh}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .results-info{color:var(--muted)}
+  .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .product-card{
+    background:var(--card);
+    border-radius:12px;
+    padding:12px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:transform .12s ease;
+  }
+  .product-card:hover{transform:translateY(-6px)}
+  .product-media{height:170px;border-radius:10px;overflow:hidden;background:#f3f4f6;display:flex;align-items:center;justify-content:center}
+  .product-media img{width:100%;height:100%;object-fit:cover}
+  .product-title{font-weight:600;margin:0}
+  .product-meta{color:var(--muted);font-size:13px}
+  .product-actions{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+  .price{font-weight:700;color:#111827}
+  .add-btn{padding:8px 10px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
+
+  /* cart drawer */
+  .cart-drawer{
+    position:fixed;right:18px;top:84px;width:360px;max-width:90%;background:var(--card);border-radius:12px;padding:12px;box-shadow:0 20px 60px rgba(2,6,23,0.2);z-index:60;
+  }
+  .cart-header{display:flex;justify-content:space-between;align-items:center}
+  .cart-items{max-height:50vh;overflow:auto;margin-top:12px;display:flex;flex-direction:column;gap:12px}
+  .cart-item{display:flex;gap:10px;align-items:center;border-radius:10px;padding:8px;border:1px solid #f0f2f5}
+  .cart-item img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+  .qty-controls{display:flex;gap:6px;align-items:center}
+  .remove-btn{background:none;border:none;color:var(--danger);cursor:pointer}
+
+  /* modal */
+  .modal{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80;
+  }
+  .modal.hidden{display:none}
+  .modal-content{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 30px 80px rgba(2,6,23,0.5);max-width:920px;width:95%;position:relative}
+  .modal-content.small{max-width:560px}
+  .modal-close{background:none;border:none;font-size:18px;position:absolute;right:20px;top:18px}
+
+  /* product modal layout */
+  .modal-body{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .modal-body img{width:100%;height:360px;object-fit:cover;border-radius:10px}
+  .product-details h2{margin-top:0}
+  .option-row{display:flex;gap:8px;margin-top:8px}
+
+  /* no results */
+  .no-results{padding:40px;text-align:center;color:var(--muted)}
+  .hidden{display:none}
+
+  /* footer */
+  .site-footer{padding:20px 0;background:#fff;border-top:1px solid #e6e9ef;margin-top:40px}
+  .footer-inner{display:flex;justify-content:space-between;align-items:center}
+
+  /* Responsive */
+  @media (max-width:980px){
+    .products-grid{grid-template-columns:repeat(2,1fr)}
+    .main-grid{grid-template-columns:1fr}
+    .filters{position:relative;height:auto;order:2}
+    #menuToggle{display:block}
+  }
+
+  @media (max-width:600px){
+    .products-grid{grid-template-columns:repeat(1,1fr)}
+    .search-wrap{display:none}
+    .category-bar{display:none}
+    .cart-drawer{right:12px;top:auto;bottom:12px;width:95%}
+  }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <button id="menuToggle" class="menu-btn" aria-label="Toggle menu">☰</button>
+        <a href="#" class="logo">Opoozle <span class="logo-sub">Store</span></a>
+      </div>
+
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="Search products, e.g. joggers, perfume..." aria-label="Search products">
+      </div>
+
+      <div class="header-actions">
+        <button id="favoritesBtn" class="icon-btn" title="Favorites">♡</button>
+        <button id="cartBtn" class="cart-btn" aria-label="Open cart">
+          🛒 <span id="cartCount" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+
+    <nav id="categoryBar" class="category-bar container">
+      <button class="cat-btn active" data-cat="all">All</button>
+      <button class="cat-btn" data-cat="Joggers">Joggers</button>
+      <button class="cat-btn" data-cat="Boxers">Boxers</button>
+      <button class="cat-btn" data-cat="Unisex">Unisex</button>
+      <button class="cat-btn" data-cat="Bags">Bags</button>
+      <button class="cat-btn" data-cat="Cosmetics">Cosmetics</button>
+      <button class="cat-btn" data-cat="Perfume">Perfume</button>
+      <button class="cat-btn" data-cat="Roll-on">Roll-on</button>
+      <button class="cat-btn" data-cat="Jewelry">Jewelry</button>
+      <button class="cat-btn" data-cat="Footwear">Footwear</button>
+      <button class="cat-btn" data-cat="Caps">Caps</button>
+      <button class="cat-btn" data-cat="Underwear">Underwear</button>
+    </nav>
+  </header>
+
+  <main class="container main-grid">
+    <aside id="filters" class="filters">
+      <h3>Filters</h3>
+      <div class="filter-group">
+        <label>Price</label>
+        <select id="priceFilter">
+          <option value="any">Any</option>
+          <option value="0-20">Under ₦20</option>
+          <option value="20-50">₦20 — ₦50</option>
+          <option value="50-100">₦50 — ₦100</option>
+          <option value="100-9999">Over ₦100</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Sort</label>
+        <select id="sortSelect">
+          <option value="popular">Most Popular</option>
+          <option value="new">Newest</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Brands (sample)</label>
+        <div class="brands">
+          <label><input type="checkbox" value="Opoozle" class="brandChk"> Opoozle</label>
+          <label><input type="checkbox" value="Primo" class="brandChk"> Primo</label>
+          <label><input type="checkbox" value="Nixa" class="brandChk"> Nixa</label>
+          <label><input type="checkbox" value="Glance" class="brandChk"> Glance</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <button id="clearFilters" class="btn">Clear Filters</button>
+      </div>
+
+      <hr>
+      <h4>About Opoozle</h4>
+      <p>Opoozle Store is a demo e-commerce site (front-end). This sample store demonstrates product listing, cart management, and a mock checkout flow. No real payments are taken.</p>
+    </aside>
+
+    <section class="products-section">
+      <div class="toolbar">
+        <div id="resultsInfo" class="results-info">Showing 0 products</div>
+        <div class="view-controls">
+          <button id="gridViewBtn" class="small">Grid</button>
+          <button id="listViewBtn" class="small">List</button>
+        </div>
+      </div>
+
+      <div id="productsGrid" class="products-grid" aria-live="polite"></div>
+
+      <div id="noResults" class="no-results hidden">
+        <p>No products found. Try different filters or search terms.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Drawer -->
+  <aside id="cartDrawer" class="cart-drawer hidden" aria-hidden="true">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCart" class="icon-btn">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-totals">
+        <div>Items: <span id="cartItemsCount">0</span></div>
+        <div>Total: <strong id="cartTotal">₦0.00</strong></div>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end">
+        <button id="checkoutBtn" class="btn primary" disabled>Proceed to Checkout</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Product Modal -->
+  <div id="productModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button id="closeModal" class="modal-close" aria-label="Close product">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Order Success / Checkout Modal -->
+  <div id="orderModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content small">
+      <button id="closeOrderModal" class="modal-close" aria-label="Close">✕</button>
+      <div id="orderBody">
+        <!-- filled in by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Opoozle Store</strong>
+        <p>Demo store. Built for learning and prototyping.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // =========================
+  // products.js content
+  // =========================
+  const PRODUCTS = [
+    {
+      id: "p001",
+      title: "Cozy Joggers — Midnight Gray",
+      category: "Joggers",
+      brand: "Opoozle",
+      price: 28.00,
+      rating: 4.6,
+      img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=7e19b6f1b1b1121fd64b6b3c6c9333d9",
+      description: "Soft, stretchable joggers designed for comfort. Elastic waistband with drawcord and tapered ankle."
+    },
+    {
+      id: "p002",
+      title: "Men's Boxer Briefs — 3 Pack",
+      category: "Boxers",
+      brand: "Primo",
+      price: 19.99,
+      rating: 4.3,
+      img: "https://images.unsplash.com/photo-1562158070-2593f2f4d9b7?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=9540d0da3b70a1e6d2f5db32d7c6bcd9",
+      description: "Breathable boxer briefs made from cotton-spandex blend for everyday wear."
+    },
+    {
+      id: "p003",
+      title: "Unisex Lightweight Hoodie",
+      category: "Unisex",
+      brand: "Nixa",
+      price: 39.50,
+      rating: 4.7,
+      img: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2a8fada8d9f20bfb3be1d7f06da3d36a",
+      description: "Chic and versatile hoodie for layering. Unisex fit with soft fleece lining."
+    },
+    {
+      id: "p004",
+      title: "Classic Canvas Tote Bag",
+      category: "Bags",
+      brand: "Opoozle",
+      price: 24.00,
+      rating: 4.2,
+      img: "https://images.unsplash.com/photo-1515274958272-6f6b9e3d80b6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=9d45c205b3be17f2c87f765491cc6a2f",
+      description: "Durable canvas tote with inner pocket. Perfect for daily errands or markets."
+    },
+    {
+      id: "p005",
+      title: "Liquid Perfume — Ocean Bloom (50ml)",
+      category: "Perfume",
+      brand: "Opoozle",
+      price: 45.00,
+      rating: 4.8,
+      img: "https://images.unsplash.com/photo-1542831371-d531d36971e6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=5bbebd7be19f36c6a1f7eb2ef35f20fe",
+      description: "A fresh and floral fragrance, long-lasting with a refined finish."
+    },
+    {
+      id: "p006",
+      title: "Roll-on Deodorant — Fresh",
+      category: "Roll-on",
+      brand: "Primo",
+      price: 6.50,
+      rating: 4.1,
+      img: "https://images.unsplash.com/photo-1616617662034-e481b0b8d67a?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=fd6e3e6b3eac6c1162b9c7c4f6f8db1f",
+      description: "Gentle roll-on formula that keeps you fresh all day."
+    },
+    {
+      id: "p007",
+      title: "Gold Plated Necklace",
+      category: "Jewelry",
+      brand: "Nixa",
+      price: 59.99,
+      rating: 4.5,
+      img: "https://images.unsplash.com/photo-1520975685131-603f3d9b4f6b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=0c4f1b8f3d1c9d3aa1e8b1e8f3d1c7f6",
+      description: "Elegant necklace with gold plating — ideal for special occasions."
+    },
+    {
+      id: "p008",
+      title: "Comfort Sandals — Tan",
+      category: "Footwear",
+      brand: "Opoozle",
+      price: 29.50,
+      rating: 4.0,
+      img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=1d1d9e6f6f4a9f6f7b8f4c9adf3bde38",
+      description: "Cushioned sandals with non-slip sole for beach or city walks."
+    },
+    {
+      id: "p009",
+      title: "Unstructured Face Cap",
+      category: "Caps",
+      brand: "Primo",
+      price: 14.00,
+      rating: 4.2,
+      img: "https://images.unsplash.com/photo-1599999907115-2da5bef8bece?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=3d1c2f3c8a3b9f5a1c6d3b8e9f1a0b2c",
+      description: "Classic cap with adjustable strap. Soft, breathable cotton."
+    },
+    {
+      id: "p010",
+      title: "Sneaker Runner — White",
+      category: "Footwear",
+      brand: "Nixa",
+      price: 69.99,
+      rating: 4.7,
+      img: "https://images.unsplash.com/photo-1519741497626-7f10a46a1c9b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=a5f43f56c8f8d5d0b8a3d1a1d2c7e9f0",
+      description: "Lightweight sneakers with breathable mesh and responsive sole."
+    },
+    {
+      id: "p011",
+      title: "Women's Underwear — Soft Lace",
+      category: "Underwear",
+      brand: "Opoozle",
+      price: 12.00,
+      rating: 4.0,
+      img: "https://images.unsplash.com/photo-1514996937319-344454492b37?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=8b2d4b0b9b5a8f6c3d2a8d1f1c3b4a5f",
+      description: "Comfortable lace-trim underwear with breathable cotton lining."
+    },
+    {
+      id: "p012",
+      title: "Makeup Compact — Natural Beige",
+      category: "Cosmetics",
+      brand: "Glance",
+      price: 16.75,
+      rating: 4.4,
+      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=c1c2e3d4a5b6c7d8e9f0a1b2c3d4e5f6",
+      description: "Creamy compact foundation for medium coverage and smooth finish."
+    }
+  ];
+  </script>
+
+  <script>
+  // =========================
+  // app.js content (vanilla JS)
+  // =========================
+
+  // Simple utilities
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+  // Use Intl.NumberFormat to format as Nigerian Naira (₦)
+  const CURRENCY_FORMAT = new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  const formatPrice = (p) => CURRENCY_FORMAT.format(Number(p || 0));
+
+  // App state
+  let catalog = PRODUCTS.slice();
+  let cart = {}; // { productId: qty }
+  let viewMode = 'grid'; // or 'list'
+  let activeCategory = 'all';
+
+  // DOM refs
+  const productsGrid = $('#productsGrid');
+  const resultsInfo = $('#resultsInfo');
+  const searchInput = $('#searchInput');
+  const priceFilter = $('#priceFilter');
+  const sortSelect = $('#sortSelect');
+  const brandChecks = () => $$('.brandChk');
+  const clearFiltersBtn = $('#clearFilters');
+  const cartBtn = $('#cartBtn');
+  const cartDrawer = $('#cartDrawer');
+  const cartItemsEl = $('#cartItems');
+  const cartCountEl = $('#cartCount');
+  const cartTotalEl = $('#cartTotal');
+  const cartItemsCountEl = $('#cartItemsCount');
+  const checkoutBtn = $('#checkoutBtn');
+  const closeCart = $('#closeCart');
+  const categoryButtons = $$('.cat-btn');
+  const productModal = $('#productModal');
+  const modalBody = $('#modalBody');
+  const closeModal = $('#closeModal');
+  const orderModal = $('#orderModal');
+  const orderBody = $('#orderBody');
+  const closeOrderModal = $('#closeOrderModal');
+  const noResultsEl = $('#noResults');
+  const gridViewBtn = $('#gridViewBtn');
+  const listViewBtn = $('#listViewBtn');
+  const menuToggle = $('#menuToggle');
+  const filtersPanel = $('#filters');
+
+  // Persist cart in localStorage
+  function loadCart(){
+    try{
+      const raw = localStorage.getItem('opoozle_cart');
+      if(raw) cart = JSON.parse(raw);
+    }catch(e){ cart = {} }
+  }
+  function saveCart(){
+    localStorage.setItem('opoozle_cart', JSON.stringify(cart));
+  }
+
+  // Helpers for catalog filtering and sorting
+  function applyFilters(){
+    const q = (searchInput.value || '').trim().toLowerCase();
+    const priceVal = priceFilter.value;
+    const brands = brandChecks().filter(c=>c.checked).map(c=>c.value);
+    const sort = sortSelect.value;
+
+    let items = catalog.slice();
+
+    if(activeCategory !== 'all'){
+      items = items.filter(p => p.category === activeCategory);
+    }
+
+    if(q){
+      items = items.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q)
+      );
+    }
+
+    if(priceVal !== 'any'){
+      const [min,max] = priceVal.split('-').map(Number);
+      items = items.filter(p => p.price >= min && p.price <= max);
+    }
+
+    if(brands.length) items = items.filter(p => brands.includes(p.brand));
+
+    // sorting
+    if(sort === 'price-asc') items.sort((a,b)=>a.price-b.price);
+    else if(sort === 'price-desc') items.sort((a,b)=>b.price-a.price);
+    else if(sort === 'new') items.sort((a,b)=>b.id.localeCompare(b.id)); // placeholder
+    else items.sort((a,b)=>b.rating - a.rating);
+
+    return items;
+  }
+
+  // Render functions
+  function renderProducts(){
+    const items = applyFilters();
+    productsGrid.innerHTML = '';
+    resultsInfo.textContent = `Showing ${items.length} product${items.length !== 1 ? 's' : ''}`;
+
+    if(items.length === 0){
+      noResultsEl.classList.remove('hidden');
+    }else{
+      noResultsEl.classList.add('hidden');
+    }
+
+    items.forEach(p => {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      card.setAttribute('data-id', p.id);
+      card.innerHTML = `
+        <div class="product-media" role="img" aria-label="${escapeHtml(p.title)}">
+          <img loading="lazy" src="${p.img}" alt="${escapeHtml(p.title)}">
+        </div>
+        <div>
+          <h4 class="product-title">${escapeHtml(p.title)}</h4>
+          <div class="product-meta">${escapeHtml(p.brand)} • ${escapeHtml(p.category)}</div>
+          <div class="product-actions">
+            <div class="price">${formatPrice(p.price)}</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="btn view-btn small">View</button>
+              <button class="add-btn" data-id="${p.id}">Add</button>
+            </div>
+          </div>
+        </div>
+      `;
+      productsGrid.appendChild(card);
+    });
+
+    // attach event listeners
+    $$('.add-btn', productsGrid).forEach(btn=>{
+      btn.addEventListener('click', ()=> {
+        addToCart(btn.dataset.id, 1);
+      });
+    });
+    $$('.view-btn', productsGrid).forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const id = e.target.closest('.product-card').dataset.id;
+        openProductModal(id);
+      })
+    });
+  }
+
+  function renderCart(){
+    cartItemsEl.innerHTML = '';
+    const ids = Object.keys(cart);
+    if(ids.length === 0){
+      cartItemsEl.innerHTML = `<p style="color:var(--muted)">Your cart is empty. Add something nice!</p>`;
+      checkoutBtn.disabled = true;
+    }else{
+      checkoutBtn.disabled = false;
+      ids.forEach(id=>{
+        const p = catalog.find(x=>x.id===id);
+        if(!p) return;
+        const qty = cart[id];
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <img src="${p.img}" alt="${escapeHtml(p.title)}">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-weight:600">${escapeHtml(p.title)}</div>
+                <div style="color:var(--muted);font-size:13px">${escapeHtml(p.brand)} • ${escapeHtml(p.category)}</div>
+              </div>
+              <div style="font-weight:700">${formatPrice(p.price * qty)}</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+              <div class="qty-controls">
+                <button class="btn small dec" data-id="${id}">−</button>
+                <div style="padding:6px 10px;border-radius:8px;border:1px solid #e6e9ef">${qty}</div>
+                <button class="btn small inc" data-id="${id}">+</button>
+                <button class="remove-btn" data-id="${id}">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+        cartItemsEl.appendChild(row);
+      });
+
+      // attach qty and remove handlers
+      $$('.inc', cartItemsEl).forEach(b => b.addEventListener('click', (e)=>{
+        const id = e.target.dataset.id;
+        addToCart(id, 1);
+      }));
+      $$('.dec', cartItemsEl).forEach(b => b.addEventListener('click', (e)=>{
+        const id = e.target.dataset.id;
+        addToCart(id, -1);
+      }));
+      $$('.remove-btn', cartItemsEl).forEach(b => b.addEventListener('click', (e)=>{
+        const id = b.dataset.id;
+        removeFromCart(id);
+      }));
+    }
+
+    // totals
+    const totalItems = Object.values(cart).reduce((s,n)=>s+n,0);
+    const totalPrice = Object.entries(cart).reduce((s,[id,qty])=>{
+      const p = catalog.find(x=>x.id===id);
+      return s + (p ? p.price * qty : 0);
+    }, 0);
+    cartCountEl.textContent = totalItems;
+    cartItemsCountEl.textContent = totalItems;
+    cartTotalEl.textContent = formatPrice(totalPrice);
+    saveCart();
+  }
+
+  // Cart operations
+  function addToCart(id, delta=1){
+    const p = catalog.find(x=>x.id===id);
+    if(!p) return;
+    if(!cart[id]) cart[id] = 0;
+    cart[id] += delta;
+    if(cart[id] <= 0) delete cart[id];
+    renderCart();
+    // Quick feedback: pulse cart count
+    try{
+      cartCountEl.animate([{transform:'scale(1.0)'},{transform:'scale(1.12)'},{transform:'scale(1.0)'}],{duration:260});
+    }catch(e){}
+  }
+
+  function removeFromCart(id){
+    delete cart[id];
+    renderCart();
+  }
+
+  // UI interactions
+  function openCart(){
+    cartDrawer.classList.remove('hidden');
+    cartDrawer.setAttribute('aria-hidden','false');
+  }
+
+  function closeCartDrawer(){
+    cartDrawer.classList.add('hidden');
+    cartDrawer.setAttribute('aria-hidden','true');
+  }
+
+  function setActiveCategory(cat){
+    activeCategory = cat;
+    categoryButtons.forEach(b => {
+      b.classList.toggle('active', b.dataset.cat === cat);
+    });
+    renderProducts();
+  }
+
+  function openProductModal(id){
+    const p = catalog.find(x=>x.id===id);
+    if(!p) return;
+    modalBody.innerHTML = `
+      <div class="modal-body">
+        <div>
+          <img src="${p.img}" alt="${escapeHtml(p.title)}">
+        </div>
+        <div class="product-details">
+          <h2>${escapeHtml(p.title)}</h2>
+          <div style="color:var(--muted)">${escapeHtml(p.brand)} • ${escapeHtml(p.category)} — Rating: ${p.rating}</div>
+          <p style="margin-top:12px">${escapeHtml(p.description)}</p>
+          <div style="margin-top:12px;font-weight:700;font-size:18px">${formatPrice(p.price)}</div>
+          <div class="option-row">
+            <label>Quantity</label>
+            <input id="modalQty" type="number" min="1" value="1" style="width:80px;padding:6px;border-radius:8px;border:1px solid #e6e9ef">
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button id="modalAddBtn" class="btn primary">Add to Cart</button>
+            <button id="modalBuyBtn" class="btn">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    `;
+    productModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    $('#modalAddBtn').addEventListener('click', ()=>{
+      const qty = Math.max(1, Number($('#modalQty').value || 1));
+      addToCart(id, qty);
+      closeProductModal();
+      openCart();
+    });
+    $('#modalBuyBtn').addEventListener('click', ()=>{
+      const qty = Math.max(1, Number($('#modalQty').value || 1));
+      cart = {}; // reset
+      cart[id] = qty;
+      renderCart();
+      closeProductModal();
+      openCart();
+      // Then click checkout programmatically
+      setTimeout(()=> checkoutFlow(), 200);
+    });
+  }
+
+  function closeProductModal(){
+    productModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function checkoutFlow(){
+    // Build checkout form inside cart
+    const items = Object.keys(cart);
+    if(items.length === 0){
+      alert('Your cart is empty.');
+      return;
+    }
+
+    // build a simple checkout form
+    orderBody.innerHTML = `
+      <h3>Checkout</h3>
+      <div style="margin-bottom:12px;color:var(--muted)">Please fill your shipping details. This demo does not take real payments.</div>
+      <form id="checkoutForm">
+        <label>Full name</label><br>
+        <input name="name" required style="width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6e9ef"><br>
+        <label>Shipping address</label><br>
+        <input name="address" required style="width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6e9ef"><br>
+        <label>City</label><br>
+        <input name="city" required style="width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6e9ef"><br>
+        <label>Country</label><br>
+        <input name="country" required style="width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6e9ef"><br>
+        <label>Email</label><br>
+        <input name="email" type="email" required style="width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6e9ef"><br>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <div style="color:var(--muted)">Total: <strong>${cartTotalEl.textContent}</strong></div>
+          <div style="display:flex;gap:8px">
+            <button type="button" id="backBtn" class="btn">Back</button>
+            <button type="submit" class="btn primary">Place Order</button>
+          </div>
+        </div>
+      </form>
+    `;
+    orderModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    $('#backBtn').addEventListener('click', ()=> {
+      orderModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    $('#checkoutForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const order = {
+        id: 'ORD-' + Date.now().toString(36).toUpperCase(),
+        customer: fd.get('name'),
+        email: fd.get('email'),
+        address: fd.get('address') + ', ' + fd.get('city') + ', ' + fd.get('country'),
+        items: Object.entries(cart).map(([id,qty])=>{
+          const p = catalog.find(x=>x.id===id);
+          return {id, title: p ? p.title : id, price: p ? p.price : 0, qty};
+        }),
+        total: cartTotalEl.textContent,
+        date: new Date().toLocaleString()
+      };
+
+      // Simulate an order submission delay
+      orderBody.innerHTML = `<div style="text-align:center;padding:24px">Placing your order... <div style="height:12px"></div></div>`;
+      setTimeout(()=> {
+        showOrderSuccess(order);
+        cart = {};
+        saveCart();
+        renderCart();
+      }, 800);
+    });
+  }
+
+  function showOrderSuccess(order){
+    orderBody.innerHTML = `
+      <div style="text-align:center;padding:8px">
+        <h3>Thank you, ${escapeHtml(order.customer)}!</h3>
+        <p style="color:var(--muted)">Your order <strong>${order.id}</strong> was placed on ${order.date}.</p>
+        <div style="text-align:left;margin-top:12px">
+          <strong>Items</strong>
+          <ul>
+            ${order.items.map(it => `<li>${escapeHtml(it.title)} × ${it.qty} — ${formatPrice(it.price * it.qty)}</li>`).join('')}
+          </ul>
+          <div style="margin-top:8px"><strong>Total: ${order.total}</strong></div>
+          <div style="margin-top:14px">
+            <button id="doneBtn" class="btn primary">Done</button>
+          </div>
+        </div>
+      </div>
+    `;
+    $('#doneBtn').addEventListener('click', ()=>{
+      orderModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+  }
+
+  /* utility to avoid XSS when inserting simple text contents */
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  // UI Event wiring
+  function attachEvents(){
+    searchInput.addEventListener('input', debounce(()=> renderProducts(), 250));
+    priceFilter.addEventListener('change', renderProducts);
+    sortSelect.addEventListener('change', renderProducts);
+    clearFiltersBtn.addEventListener('click', ()=>{
+      priceFilter.value = 'any';
+      sortSelect.value = 'popular';
+      brandChecks().forEach(c=>c.checked=false);
+      searchInput.value = '';
+      setActiveCategory('all');
+      renderProducts();
+    });
+
+    cartBtn.addEventListener('click', ()=> {
+      renderCart();
+      openCart();
+    });
+    closeCart.addEventListener('click', closeCartDrawer);
+    checkoutBtn.addEventListener('click', checkoutFlow);
+
+    categoryButtons.forEach(b => {
+      b.addEventListener('click', (e) => {
+        setActiveCategory(e.target.dataset.cat);
+      });
+    });
+
+    productModal.addEventListener('click', (e)=>{
+      if(e.target === productModal || e.target.id === 'closeModal') closeProductModal();
+    });
+    closeModal.addEventListener('click', closeProductModal);
+
+    orderModal.addEventListener('click', (e)=>{
+      if(e.target === orderModal || e.target.id === 'closeOrderModal') {
+        orderModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+    closeOrderModal.addEventListener('click', ()=> {
+      orderModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    gridViewBtn.addEventListener('click', ()=>{
+      viewMode = 'grid'; productsGrid.classList.remove('list'); renderProducts();
+    });
+    listViewBtn.addEventListener('click', ()=>{
+      viewMode = 'list'; productsGrid.classList.add('list'); renderProducts();
+    });
+
+    menuToggle.addEventListener('click', ()=>{
+      // On small screens allow toggling filters
+      if(window.innerWidth <= 980){
+        if(filtersPanel.style.display === 'block') filtersPanel.style.display = '';
+        else filtersPanel.style.display = 'block';
+      }
+    });
+
+    // keyboard: Esc closes modals/drawers
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') {
+        closeProductModal();
+        orderModal.classList.add('hidden');
+        closeCartDrawer();
+      }
+    });
+  }
+
+  // small debounce
+  function debounce(fn, ms=200){
+    let id;
+    return (...args)=> {
+      clearTimeout(id);
+      id = setTimeout(()=> fn(...args), ms);
+    }
+  }
+
+  // initial bootstrap
+  function init(){
+    loadCart();
+    attachEvents();
+    renderProducts();
+    renderCart();
+
+    // initial category active
+    setActiveCategory('all');
+  }
+
+  // Kick off
+  init();
+  </script>
+</body>
+</html>
